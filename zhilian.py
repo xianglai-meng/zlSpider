@@ -5,6 +5,7 @@ import re
 from bs4 import BeautifulSoup
 import os
 import json
+from prettytable import PrettyTable
 
 
 class zpClass(object):
@@ -38,12 +39,18 @@ def getAllUrlOnePage(html):
     zpJson = json.loads(htmlcontent)
     #print(zpInfo)
 
-    zpInfos = (zpInfo["data"])["results"]
+    zpInfos = (zpJson["data"])["results"]
+
+    x = PrettyTable(["jobName", "positionURL"])
 
     zp = zpClass
-    for i in len(zpInfos):   
-    zp.jobName = ((zpInfo["data"])["results"])[0]
-    zp.url= zpInfo.url
+    for i in range(len(zpInfos[0])-1):   
+        # zp.jobName = (zpInfos[i])['jobName']
+        zp.url= (zpInfos[i])['positionURL']
+        x.add_row([(zpInfos[i])['jobName'],(zpInfos[i])['positionURL']])
+
+    print(x.get_string())
+
 
     # mainsoup = BeautifulSoup(htmlcontent, 'html.parser')  
     # main = mainsoup.find_all('div',attrs={'id':'listContent'})
