@@ -152,7 +152,7 @@ def main():
         page =num*90
         #time.sleep(0.2)
         for x in language:
-
+            urllib.
             getAllUrlOnePage(setSearchUrl(page))
 
 if __name__ == "__main__":
