@@ -1,6 +1,6 @@
 #coding:utf-8
 import urllib 
-from urllib import request
+import requests
 import re
 from bs4 import BeautifulSoup
 import os
@@ -8,6 +8,7 @@ import json
 #from prettytable import PrettyTable
 import MySQLdb
 import time
+import pyecharts
 
 
 class zpClass(object):
@@ -63,8 +64,8 @@ def selectFromDB(sqlstr):
 def getInfoOnePage():
     pass
 
-def getAllUrlOnePage(html):
-    htmlcontent =getHtml(html)
+def getAllUrlOnePage(html,data):
+    htmlcontent =getHtml(html,data)
     #print(str(htmlcontent))
     # hisfile = os.open('/home/bing/python/zlSpider/1.txt',os.O_RDWR)
     # os.write(hisfile,htmlcontent.encode('utf-8'))
@@ -99,40 +100,22 @@ def getAllUrlOnePage(html):
 
         insertIntoDB(zp)
         #x.add_row([(zpInfos[i])['jobName'],(zpInfos[i])['positionURL']])
-
-    #print(x.get_string())
-
-
-    # mainsoup = BeautifulSoup(htmlcontent, 'html.parser')  
-    # main = mainsoup.find_all('div',attrs={'id':'listContent'})
-
-    # urlcountdic={}
-    # urllist=[]
-    # try:
-    #     for urlandcount in main:
-
-    #         img_url = re.findall('href="(/\d{1,10}\.html)"',str(urlandcount))
-    #         img_count = re.findall('<span>(\d{1,10})</span>',str(urlandcount))
-
-    #         dict1={img_url[0]:img_count[0]}
-    #         urlcountdic.update(dict1)
-    #         urllist.append(img_url[0])
-    # except Exception as identifier:
-    #     pass
    
-    # return urllist,urlcountdic
 
-def getHtml(url):
+def getHtml(url,data):
     headers = {
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Origin': 'https://sou.zhaopin.com',
-        'Referer': 'https://sou.zhaopin.com/?jl=530&sf=0&st=0&kw=C',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'}
+        # 'Accept-Encoding': 'gzip, deflate, br',
+        # 'Origin': 'https://sou.zhaopin.com',
+        # 'Referer': 'https://sou.zhaopin.com/?jl=530&sf=0&st=0&kw=C',
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36'
+        }
 
-    
+    ajdata = urllib.parse.urlencode(data).encode(encoding='UTF8') 
     # 需要使用url和headers生成一个Request对象，然后将其传入urlopen方法中
-    req = request.Request(url, headers=headers)
-    respone = request.urlopen(req)
+    req = urllib.request.Request(url,data=None, headers=headers)
+
+    #req = urllib.request.Request(url, headers=headers)
+    respone = urllib.request.urlopen(req)
     html= respone.read().decode('utf-8')
 
     return html
@@ -145,15 +128,23 @@ def setSearchUrl(page,wd):
 def main():
 
    # url='https://fe-api.zhaopin.com/c/i/sou?pageSize=%s&cityId=530&salary=15001,25000&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kw=C%23&kt=3&=15001&userCode=125678027&at=7dd18a04c95e43de965b7b1769be77a8&rt=58faace82a0745e2bcdf6a98d29fe794&_v=0.57206713&x-zp-page-request-id=58b6e353b7434917a2e3ba77b41a7e63-1560413029089-47837&x-zp-client-id=765a2c81-adbe-4c98-958d-76b6383c74e6'%
-    
-    page =90
-    language =['java','C#','C++','python','go','php']
-    for num in range(1,11):
-        page =num*90
+    url="https://fe-api.zhaopin.com/c/i/sou?cityId=530&salary=15001,25000&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kt=3&=15001&userCode=125678027&at=7dd18a04c95e43de965b7b1769be77a8&rt=58faace82a0745e2bcdf6a98d29fe794&_v=0.57206713&x-zp-page-request-id=58b6e353b7434917a2e3ba77b41a7e63-1560413029089-47837&x-zp-client-id=765a2c81-adbe-4c98-958d-76b6383c74e6"
+    #url="https://fe-api.zhaopin.com/c/i/sou?cityId=530&salary=15001,25000&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kt=3&=15001&userCode=125678027&at=7dd18a04c95e43de965b7b1769be77a8&rt=58faace82a0745e2bcdf6a98d29fe794&_v=0.57206713&x-zp-page-request-id=58b6e353b7434917a2e3ba77b41a7e63-1560413029089-47837&x-zp-client-id=765a2c81-adbe-4c98-958d-76b6383c74e6&pageSize=90&kw=java"
+    page =0
+    language =['Java','C','Python','C++','Visual Basic .NET','C#','JavaScript','php','Sql','Go']
+    formdata={
+        # "pageSize":"90",
+        # "kw":"java"
+    }
+    for x  in language:      
+        tempwd= urllib.parse.quote(x)
+        print(x)
+        print(tempwd)
         #time.sleep(0.2)
-        for x in language:
-            urllib.
-            getAllUrlOnePage(setSearchUrl(page))
+        for num in range(1,11):
+            page =num*90           
+            #getAllUrlOnePage(setSearchUrl(page,tempwd))
+            getAllUrlOnePage(url,formdata)
 
 if __name__ == "__main__":
     main()
