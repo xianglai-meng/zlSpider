@@ -112,7 +112,8 @@ def getHtml(url,data):
 
     ajdata = urllib.parse.urlencode(data).encode(encoding='UTF8') 
     # 需要使用url和headers生成一个Request对象，然后将其传入urlopen方法中
-    req = urllib.request.Request(url,data=None, headers=headers)
+    # 如果有data参数必须有method参数
+    req = urllib.request.Request(url,data=ajdata, headers=headers,method="GET")
 
     #req = urllib.request.Request(url, headers=headers)
     respone = urllib.request.urlopen(req)
